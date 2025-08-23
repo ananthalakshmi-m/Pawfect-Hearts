@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block title %}Dogs for Adoption{% endblock %}
+
+{% block content %}
+
+<style>
+  .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 12px;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+
+  .btn-outline-danger:hover {
+    background-color: #ffebeb;
+  }
+
+  .form-control,
+  .form-label {
+    font-size: 0.95rem;
+  }
+
+  .favorite-btn:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    transition: 0.2s ease;
+  }
+
+  .form-control:focus {
+    border-color: #4b8ffd;
+    box-shadow: 0 0 0 0.15rem rgba(75, 143, 253, 0.25);
+  }
+
+  .heart-icon {
+    font-size: 23px;
+    margin-left: 14px;
+    position: relative;
+    top: -2px;
+    cursor: pointer;
+  }
+
+  .no-data-message {
+    font-style: italic;
+    text-align: center;
+    color: #495057;
+    background-color: #f8f9fa;
+    padding: 1rem 1.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 1.05rem;
+  }
+
+  .shadow-sm {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  }
+</style>
+
+<div class="container py-4">
+  <h2 class="text-center mb-4">🐾 Dogs Available for Adoption</h2>
+
+  <!-- Filter Form -->
+  <form method="get" class="mb-5 bg-light p-4 rounded shadow-sm">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Breed</label>
+        <select name="breed" class="form-select">
+          <option value="">All Breeds</option>
+          {% for breed in breeds %}
+            <option value="{{ breed }}" {% if selected_breed == breed %}selected{% endif %}>{{ breed }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Location</label>
+        <select name="location" class="form-select">
+          <option value="">All Locations</option>
+          {% for location in locations %}
+            <option value="{{ location }}" {% if selected_location == location %}selected{% endif %}>{{ location }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary w-50">Filter</button>
+        <a href="{% url 'adoption_list' %}" class="btn btn-outline-secondary w-50">Clear</a>
+      </div>
+    </div>
+  </form>
+
+  <!-- Top Buttons -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <a href="{% url 'favorite_dogs' %}" class="btn btn-outline-danger">
+      ❤️ View Favorites
+    </a>
+    <a href="{% url 'add_dog' %}" class="btn btn-success">
+      + Add a Dog
+    </a>
+  </div>
+
+  <!-- Dogs Grid -->
+  {% if dogs %}
+    <div class="row">
+      {% for dog in dogs %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm border-0">
+            {% if dog.image %}
+              <a href="{% url 'dog_detail' dog.pk %}">
+                <img src="{{ dog.image.url }}" class="card-img-top rounded-top" style="height: 320px; object-fit: cover;" alt="{{ dog.name }}">
+              </a>
+            {% endif %}
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">{{ dog.name }}</h5>
+                {% if user.is_authenticated %}
+                  <span class="favorite-btn" data-dog-id="{{ dog.id }}" title="Toggle Favorite">
+                    <i class="fa-heart
+                      {% if user in dog.favorited_by.all %}
+                        fas text-danger
+                      {% else %}
+                        far text-muted
+                      {% endif %}
+                    heart-icon"></i>
+                  </span>
+                {% endif %}
+              </div>
+              <p class="mb-1 text-muted">Breed: {{ dog.breed }}</p>
+              <p class="mb-0">Age: {{ dog.age }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-data-message" role="alert">
+      No dogs available right now.
+    </div>
+  {% endif %}
+</div>
+
+<!-- Favorite Toggle Script -->
+<script>
+  document.querySelectorAll('.favorite-btn').forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+      const dogId = this.dataset.dogId;
+      fetch(`/adoption/toggle-favorite/${dogId}/`)
+        .then(res => res.json())
+        .then(data => {
+          const icon = this.querySelector('i');
+          if (data.favorited) {
+            icon.classList.remove('far', 'text-muted');
+            icon.classList.add('fas', 'text-danger');
+          } else {
+            icon.classList.remove('fas', 'text-danger');
+            icon.classList.add('far', 'text-muted');
+          }
+        });
+    });
+  });
+</script>
+{% endblock %}

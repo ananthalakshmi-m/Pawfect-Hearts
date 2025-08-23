@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% block title %}Manage {{ donor.dog_name }}{% endblock %}
+
+{% block content %}
+<style>
+  .manage-header {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+
+  .btn-custom {
+    min-width: 110px;
+    font-weight: 500;
+    padding: 0.4rem 0.9rem;
+    border-radius: 5px;
+  }
+
+  .info-label {
+    font-weight: 600;
+    color: #333;
+    width: 40%;
+    padding: 0.4rem 0.6rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .info-value {
+    color: #222;
+    width: 60%;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .table {
+    margin: 0;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  .table tr {
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .table tr:last-child {
+    border-bottom: 1px solid #ffffff;
+  }
+
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .availability-switch {
+    width: 2.5rem;
+    height: 1.4rem;
+    background-color: #dee2e6;
+    border: none;
+    outline: none;
+    transition: background-color 0.3s;
+    cursor: pointer;
+  }
+
+  .availability-switch:checked {
+    background-color: #28a745;
+  }
+
+  .form-check-label {
+    font-size: 0.88rem;
+  }
+
+  .header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  @media (max-width: 767.98px) {
+    .info-label {
+      text-align: left;
+      padding: 0.5rem 0 0.2rem;
+    }
+
+    .table tr {
+      display: flex;
+      flex-direction: column;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    .info-label, .info-value {
+      width: 100%;
+      text-align: left;
+      padding: 0.2rem 0;
+    }
+
+    .header-flex {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<div class="container pt-3 pb-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="header-flex mb-3">
+        <h2 class="manage-header">Manage {{ donor.dog_name }}</h2>
+        <form method="post" action="{% url 'toggle_donor_availability' donor.pk %}">
+          {% csrf_token %}
+          <div class="form-check form-switch d-flex align-items-center">
+            <input class="form-check-input availability-switch" type="checkbox" name="available" id="availableSwitch"
+              onchange="this.form.submit()" {% if donor.available %}checked{% endif %}>
+            <label class="form-check-label ms-2 fw-semibold" for="availableSwitch">
+              {% if donor.available %}
+                <span class="badge bg-success">Available</span>
+              {% else %}
+                <span class="badge bg-secondary">Not Available</span>
+              {% endif %}
+            </label>
+          </div>
+        </form>
+      </div>
+
+      <div class="card p-4">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td class="info-label">Name:</td>
+              <td class="info-value">{{ donor.dog_name }}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Breed:</td>
+              <td class="info-value">{{ donor.breed }}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Age:</td>
+              <td class="info-value">{{ donor.age }} years</td>
+            </tr>
+            <tr>
+              <td class="info-label">Blood Type:</td>
+              <td class="info-value">{{ donor.blood_type }}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Contact Info:</td>
+              <td class="info-value">{{ donor.contact_info }}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Email:</td>
+              <td class="info-value">{{ donor.email }}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Location:</td>
+              <td class="info-value">{{ donor.location }}</td>
+            </tr>
+            {% if donor.health_certificate %}
+            <tr>
+              <td class="info-label">Health Certificate:</td>
+              <td class="info-value">
+                <a href="{{ donor.health_certificate.url }}" target="_blank" class="btn btn-outline-success btn-sm">
+                  View Certificate
+                </a>
+              </td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+
+        <div class="d-flex flex-wrap gap-3 mt-4 justify-content-center">
+          <a href="{% url 'edit_donor' donor.pk %}" class="btn btn-primary btn-custom">Edit</a>
+          <a href="{% url 'delete_donor' donor.pk %}" class="btn btn-danger btn-custom">Delete</a>
+          <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary btn-custom">← Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

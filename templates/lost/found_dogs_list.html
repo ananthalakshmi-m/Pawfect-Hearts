@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block title %}Found Dogs{% endblock %}
+
+{% block content %}
+<style>
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 1rem;
+  }
+
+  .header-section h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .report-button {
+    background-color: #28a745;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0.375rem;
+    border: none;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.2s ease;
+  }
+
+  .report-button:hover {
+    background-color: #218838;
+  }
+
+  .filter-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  }
+
+  .card {
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    background-color: #ffffff;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    height: 100%;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+  }
+
+  .card-img-top {
+    height: 320px;
+    object-fit: cover;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+  }
+
+  .no-image {
+    height: 320px;
+    background-color: #f1f1f1;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+    font-size: 1.1rem;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+  }
+
+  .card-body {
+    padding: 1.2rem;
+  }
+
+  .card-title {
+    color: #333;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .card-text {
+    margin-bottom: 0.4rem;
+    color: #555;
+    font-size: 0.95rem;
+  }
+
+  .card-text strong {
+    color: #000;
+  }
+
+  .card-text.description {
+    font-style: italic;
+    color: #6c757d;
+    font-size: 0.94rem;
+    line-height: 1.5;
+    padding-bottom: 0.5rem;
+  }
+
+  .badge-date {
+    background-color: #e3f6e3;
+    color: #145214;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.25rem;
+    float: right;
+  }
+
+    .no-data-message {
+    font-style: italic;
+    text-align: center;
+    color: #495057;
+    background-color: #f8f9fa;
+    padding: 1rem 1.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 1.05rem;
+  }
+
+  .clear-button {
+    background-color: transparent;
+    color: #6c757d;
+    border: 1px solid #ced4da;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .clear-button:hover {
+    background-color: #f1f1f1;
+    color: #343a40;
+    border-color: #bfc5ca;
+  }
+
+  @media (max-width: 767.98px) {
+    .header-section {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }
+</style>
+
+<div>
+  <div class="header-section">
+    <h2 class="mb-0">Found Dogs</h2>
+    <a href="{% url 'report_found_dog' %}" class="report-button">Report Found Dog</a>
+  </div>
+
+  <div class="filter-card">
+    <form id="filter-form" method="get">
+      <div class="row g-3">
+        <div class="col-lg-5 col-md-6">
+          <label for="search" class="form-label">Search by keyword</label>
+          <input type="text" name="search" id="search" class="form-control" placeholder="e.g. park, collar, brown" value="{{ search_query }}">
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <label for="breed-select" class="form-label">Filter by breed</label>
+          <select name="breed" id="breed-select" class="form-select">
+            <option value="">All Breeds</option>
+            {% for b in breeds %}
+              <option value="{{ b }}" {% if breed_filter == b %}selected{% endif %}>{{ b }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-lg-3 d-flex align-items-end justify-content-start">
+          <div class="d-flex gap-2 w-100">
+            <button type="submit" class="btn btn-primary w-50">Apply</button>
+            <button type="button" class="clear-button w-50" onclick="clearFilters()">Clear</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  {% if dogs %}
+    <div class="row">
+      {% for dog in dogs %}
+        <div class="col-lg-4 col-md-6 mb-4">
+          <a href="{% url 'found_dog_detail' dog.pk %}" class="text-decoration-none text-dark">
+            <div class="card h-100">
+              {% if dog.image %}
+                <img src="{{ dog.image.url }}" class="card-img-top" alt="Found Dog">
+              {% else %}
+                <div class="no-image">No image available</div>
+              {% endif %}
+              <div class="card-body">
+                <h5 class="card-title">{{ dog.breed|default:"Unknown Breed" }}</h5>
+                <p class="card-text"><strong>Found at:</strong> {{ dog.found_location }}</p>
+                <p class="card-text description">{{ dog.description|truncatechars:100 }}</p>
+                <p class="card-text text-end"><span class="badge-date">Reported by {{ dog.user }}</span></p>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-data-message" role="alert">
+      No found dogs reported yet.
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  const form = document.getElementById('filter-form');
+  const searchInput = document.getElementById('search');
+  const breedSelect = document.getElementById('breed-select');
+
+  searchInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      form.submit();
+    }
+  });
+
+  breedSelect.addEventListener('change', function () {
+    form.submit();
+  });
+
+  function clearFilters() {
+    searchInput.value = '';
+    breedSelect.selectedIndex = 0;
+    form.submit();
+  }
+</script>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Confirm Match - {{ dog.name|default:"Found Dog" }}{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+  <div class="p-4 bg-white rounded shadow" style="max-width: 600px; margin: 0 auto;">
+    <h2 class="text-success mb-3">Confirm Match?</h2>
+    <p class="mb-4">
+      Are you sure you want to mark <strong>{{ dog.name|default:"this dog" }}</strong> as <span class="fw-bold text-success">Matched</span>?
+      This will indicate the owner has been found.
+    </p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="d-flex justify-content-center gap-3">
+        <button type="submit" class="btn btn-success px-4">Yes, Confirm</button>
+        <a href="{% url 'manage_found_dog' dog.pk %}" class="btn btn-secondary px-4">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

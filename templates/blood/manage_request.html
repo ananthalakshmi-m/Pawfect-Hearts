@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Manage Blood Request{% endblock %}
+
+{% block content %}
+<style>
+  .card-custom {
+    border-radius: 1rem;
+    padding: 2.5rem;
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    transition: transform 0.2s ease-in-out;
+    max-width: 650px;
+    margin: 0 auto;
+  }
+
+  .card-custom:hover {
+    transform: translateY(-4px);
+  }
+
+  .badge-status {
+    font-size: 1rem;
+    padding: 0.4em 0.8em;
+  }
+
+  .info-title {
+    font-weight: 600;
+    color: #6c757d;
+    text-align: right;
+  }
+
+  .info-value {
+    font-size: 1.05rem;
+    color: #212529;
+    text-align: left;
+  }
+
+  dl.row {
+    row-gap: 0.75rem;
+  }
+
+  .btn-group-custom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+
+  .icon {
+    font-size: 1.2rem;
+    margin-right: 0.4rem;
+  }
+</style>
+
+<div class="container mt-5">
+  <div class="card card-custom">
+    <h2 class="mb-4 text-center text-primary">
+      Manage Blood Request
+    </h2>
+
+    <dl class="row mb-0">
+      <dt class="col-sm-5 info-title">Dog Name:</dt>
+      <dd class="col-sm-7 info-value">{{ blood_request.dog_name }}</dd>
+
+      <dt class="col-sm-5 info-title">Blood Type Needed:</dt>
+      <dd class="col-sm-7 info-value">{{ blood_request.blood_type_needed }}</dd>
+
+      <dt class="col-sm-5 info-title">Location:</dt>
+      <dd class="col-sm-7 info-value">{{ blood_request.location }}</dd>
+
+      <dt class="col-sm-5 info-title">Date Requested:</dt>
+      <dd class="col-sm-7 info-value">{{ blood_request.date_requested }}</dd>
+
+      <dt class="col-sm-5 info-title">Urgency:</dt>
+      <dd class="col-sm-7 info-value text-capitalize">{{ blood_request.urgency_level }}</dd>
+
+      <dt class="col-sm-5 info-title">Reason:</dt>
+      <dd class="col-sm-7 info-value">{{ blood_request.reason|default:"-" }}</dd>
+
+      <dt class="col-sm-5 info-title">Fulfilled:</dt>
+      <dd class="col-sm-7">
+        {% if blood_request.is_fulfilled %}
+          <span class="badge bg-success badge-status">Yes</span>
+        {% else %}
+          <span class="badge bg-danger badge-status">No</span>
+        {% endif %}
+      </dd>
+    </dl>
+
+    <div class="btn-group-custom">
+      <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">
+        ← Back to Dashboard
+      </a>
+
+      {% if not blood_request.is_fulfilled %}
+      <a href="{% url 'confirm_fulfill_request' blood_request.pk %}" class="btn btn-success">
+        Mark as Got Blood
+      </a>
+      {% endif %}
+
+      <a href="{% url 'delete_request' blood_request.pk %}" class="btn btn-danger">
+        Delete Request
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

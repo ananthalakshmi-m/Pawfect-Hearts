@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Home | Man’s Best Friend{% endblock %}
+
+{% block content %}
+<!-- Welcome Section -->
+<section class="py-5" style="background-color: #f3f9ff; width: 100vw; margin-left: calc(-51vw + 50%); margin-right: calc(-50vw + 50%);" data-aos="fade-up">
+    <div class="text-center px-4 px-md-5">
+        <h1 class="display-4 fw-bold mb-3 text-dark">
+            🐾 Welcome to <span class="text-primary">Pawfect Hearts</span>
+        </h1>
+        <p class="fs-5 text-muted mb-4">Connecting people, pets, and possibilities — Adopt, report, or help save a life.</p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="{% url 'adoption_list' %}" class="btn btn-outline-primary btn-lg px-4"><i class="fas fa-dog me-1"></i>Adopt a Dog</a>
+            <a href="{% url 'report_lost_dog' %}" class="btn btn-outline-warning btn-lg px-4"><i class="fas fa-search me-1"></i>Report Lost Dog</a>
+            <a href="{% url 'report_found_dog' %}" class="btn btn-outline-info text-dark btn-lg px-4"><i class="fas fa-map-pin me-1"></i>Report Found Dog</a>
+            <a href="{% url 'register_donor' %}" class="btn btn-outline-danger btn-lg px-4"><i class="fas fa-heart me-1"></i>Donate Blood</a>
+            <a href="{% url 'request_blood' %}" class="btn btn-outline-success btn-lg px-4"><i class="fas fa-ambulance me-1"></i>Request Blood</a>
+        </div>
+    </div>
+</section>
+
+<div class="my-5"></div>
+
+<!-- About Section -->
+<section class="py-5" style="background-color: #fff5f0;" data-aos="fade-up">
+    <div class="container px-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 text-center" data-aos="fade-right">
+                <img src="https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785074_1280.jpg" alt="Dog cuddling" class="img-fluid rounded-4 shadow" style="max-height: 400px; object-fit: cover;">
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <h2 class="fw-bold mb-3 text-danger">What is Pawfect Hearts?</h2>
+                <p class="fs-5 text-muted">
+                    Pawfect Hearts is a compassionate platform that helps connect people to pups through dog adoption, lost/found reporting, and blood donation. 
+                </p>
+                <p class="fs-5 text-muted">
+                    Join a growing community that believes every dog deserves love, safety, and care — and every human deserves a loyal best friend.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="my-5"></div>
+
+<!-- How It Works Section -->
+<section class="py-5" style="background-color: #eefdff;" data-aos="zoom-in-up">
+    <div class="container px-5">
+        <h2 class="text-center fw-bold mb-5 text-muted">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card h-100 border-0 shadow-sm rounded-4 text-center p-3">
+                    <div class="card-body">
+                        <div class="mb-3 display-5">🐶</div>
+                        <h5 class="fw-semibold">Browse & Adopt</h5>
+                        <p class="text-muted">Explore available dogs, read their stories, and find your perfect match.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card h-100 border-0 shadow-sm rounded-4 text-center p-3">
+                    <div class="card-body">
+                        <div class="mb-3 display-5">📍</div>
+                        <h5 class="fw-semibold">Report Lost/Found</h5>
+                        <p class="text-muted">Quickly notify the community about a missing or found dog near you.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card h-100 border-0 shadow-sm rounded-4 text-center p-3">
+                    <div class="card-body">
+                        <div class="mb-3 display-5">❤️</div>
+                        <h5 class="fw-semibold">Donate Blood</h5>
+                        <p class="text-muted">Help save lives by registering your healthy dog as a blood donor.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="my-5"></div>
+
+<!-- Final CTA Section -->
+<section class="py-5 text-center" style="background-color: #f4ffe6; margin-bottom: 30px;" data-aos="fade-up">
+    <div class="container px-5">
+        <h3 class="fw-bold mb-3 text-success">Make a Paw-sitive Difference Today 🐾</h3>
+        <p class="fs-5 text-muted mb-4">Sign up to help dogs in need and join a growing community of kind-hearted pet lovers.</p>
+        <a href="{% url 'signup' %}" class="btn btn-success btn-lg px-5"><i class="fas fa-paw me-2"></i>Get Started</a>
+    </div>
+</section>
+
+<script>
+  window.addEventListener('load', function () {
+    window.scrollTo(0, 0);
+  });
+</script>
+
+{% endblock %}

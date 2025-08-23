@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% block title %}Found Dog Details{% endblock %}
+
+{% block content %}
+<style>
+  .found-dog-page {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: 0.8rem 1rem;
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+
+  .found-dog-image-container,
+  .found-dog-details {
+    flex: 1 1 48%;
+    box-sizing: border-box;
+  }
+
+  .found-dog-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem;
+  }
+
+  .found-dog-image-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .found-dog-image-container img,
+  #dogMap {
+    width: 100%;
+    max-height: 490px;
+    object-fit: contain;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1.7rem;
+  }
+
+  #dogMap { display: none; height: 420px; }
+
+  .found-dog-no-img {
+    width: 100%;
+    padding: 60px 20px;
+    border-radius: 12px;
+    background-color: #f0f0f0;
+    text-align: center;
+    color: #777;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1rem;
+  }
+
+  /* Switch */
+  .switch-container {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    min-height: 32px; /* ensures vertical alignment space stays even if hidden */
+  }
+
+  .switch-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2e7d32;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 28px;
+  }
+  .switch input { display: none; }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #e6f4ea;
+    border-radius: 34px;
+    transition: .4s;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px; width: 22px;
+    left: 3px; bottom: 3px;
+    background-color: #2e7d32;
+    border-radius: 50%;
+    transition: .4s;
+  }
+  input:checked + .slider {
+    background-color: #c5eccf;
+  }
+  input:checked + .slider:before {
+    transform: translateX(32px);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .btn-small {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    text-align: center;
+  }
+  .back-btn {
+    background-color: #e6f4ea;
+    color: #2e7d32;
+  }
+  .back-btn:hover { background-color: #c5eccf; }
+  .directions-btn {
+    background-color: #4ac150;
+    color: white;
+  }
+  .directions-btn:hover { background-color: #2e7d32; }
+
+  .found-dog-details {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .found-dog-details h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #222;
+  }
+  .dog-subheading {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 1.2rem;
+  }
+  .found-dog-table { width: 100%; border-collapse: collapse; }
+  .found-dog-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 1rem;
+    color: #444;
+    vertical-align: top;
+  }
+  .found-dog-table td:first-child { font-weight: 600; width: 35%; color: #555; }
+  .description-cell { word-break: break-word; }
+  .cta-box {
+    margin-top: 1rem;
+    padding: 1rem 1.2rem;
+    background-color: #e6f4ea;
+    color: #2e7d32;
+    border-left: 5px solid #81c784;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 900px) {
+    .found-dog-page { flex-direction: column; }
+    .found-dog-image-container,
+    .found-dog-details { flex: 1 1 100%; }
+    .btn-row { flex-direction: column; width: 100%; }
+    .btn-small { width: 100%; text-align: center; }
+  }
+</style>
+
+<div class="found-dog-page">
+
+  <div class="found-dog-image-container">
+    <div class="found-dog-image-wrapper">
+
+      <!-- Switch container always rendered -->
+      <div class="switch-container">
+        {% if dog.found_latitude and dog.found_longitude %}
+          <span class="switch-label">Image</span>
+          <label class="switch">
+            <input type="checkbox" id="toggleSwitch">
+            <span class="slider"></span>
+          </label>
+          <span class="switch-label">Map</span>
+        {% endif %}
+      </div>
+
+      {% if dog.image %}
+        <img id="dogImage" src="{{ dog.image.url }}" alt="Found dog image">
+      {% else %}
+        <div id="dogImage" class="found-dog-no-img">No Image Available</div>
+      {% endif %}
+
+      {% if dog.found_latitude and dog.found_longitude %}
+        <div id="dogMap"
+             data-lat="{{ dog.found_latitude|floatformat:'6' }}"
+             data-lng="{{ dog.found_longitude|floatformat:'6' }}">
+        </div>
+      {% endif %}
+
+      <div class="btn-row">
+        {% if dog.found_latitude and dog.found_longitude %}
+          <a id="directionsBtn" href="#" target="_blank" rel="noopener" class="btn-small directions-btn">📍 Get Directions</a>
+        {% endif %}
+        <a href="{% url 'found_dogs_list' %}" class="btn-small back-btn">← Back</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="found-dog-details">
+    <h2>Found Dog</h2>
+    <p class="dog-subheading">🐾 Help me find my owner!</p>
+    <table class="found-dog-table">
+      <tr><td>Breed:</td><td>{{ dog.breed|default:"Unknown" }}</td></tr>
+      <tr><td>Gender:</td><td>{{ dog.gender|default:"Unknown" }}</td></tr>
+      <tr><td>Age:</td><td>{{ dog.age|default:"Not specified" }}</td></tr>
+      <tr><td>Description:</td><td class="description-cell">{{ dog.description|default:"No description provided." }}</td></tr>
+      <tr><td>Found Location:</td><td>{{ dog.found_location }}</td></tr>
+      <tr><td>Date Found:</td><td>{{ dog.date_found }}</td></tr>
+      <tr><td>Reporter Name:</td><td>{{ dog.user|default:"Unknown" }}</td></tr>
+      <tr><td>Contact Info:</td><td>{{ dog.contact_info|default:"No contact provided" }}</td></tr>
+    </table>
+
+    <div class="cta-box">
+      If you recognize this dog or know who it belongs to, please reach out to the contact above.
+      Every moment counts in reuniting them with their family 💚
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const mapEl = document.getElementById('dogMap');
+    const imgEl = document.getElementById('dogImage');
+    const toggleSwitch = document.getElementById('toggleSwitch');
+    const directionsBtn = document.getElementById('directionsBtn');
+
+    if (mapEl && directionsBtn && toggleSwitch) {
+      const lat = Number(mapEl.dataset.lat);
+      const lng = Number(mapEl.dataset.lng);
+
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        // Map setup
+        const map = L.map('dogMap').setView([lat, lng], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([lat, lng]).addTo(map).bindPopup('Dog was found here 🐶');
+
+        // Update directions button
+        directionsBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
+        // Switch toggle
+        toggleSwitch.addEventListener('change', () => {
+          if (toggleSwitch.checked) {
+            imgEl.style.display = 'none';
+            mapEl.style.display = 'block';
+            setTimeout(() => map.invalidateSize(), 100);
+          } else {
+            mapEl.style.display = 'none';
+            imgEl.style.display = 'block';
+          }
+        });
+      }
+    }
+  });
+</script>
+{% endblock %}
