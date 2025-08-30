@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loading Pawfect Hearts...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body, html {
+      margin: 0; padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    #spinner {
+      width: 60px; height: 60px;
+      border: 6px solid #ddd;
+      border-top: 6px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    p { margin-top: 20px; color: #555; font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+  <div>
+    <div id="spinner"></div>
+    <p>Loading Pawfect Hearts...</p>
+  </div>
+
+  <script>
+    function checkServer() {
+      fetch("/")
+        .then(response => {
+          if(response.ok){
+            window.location.href = "/home/"; 
+          } else {
+            setTimeout(checkServer, 2000); 
+          }
+        })
+        .catch(() => setTimeout(checkServer, 2000));
+    }
+
+    checkServer();
+  </script>
+</body>
+</html>
