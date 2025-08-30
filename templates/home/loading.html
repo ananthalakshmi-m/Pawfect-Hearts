@@ -68,7 +68,6 @@
       margin-top: 15px;
     }
 
-    /* Floating circles */
     .floating {
       position: absolute;
       border-radius: 50%;
@@ -83,7 +82,6 @@
       100% { transform: translateY(0) translateX(0) rotate(360deg);}
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       h1 { font-size: 2rem; }
       h2 { font-size: 1rem; margin-bottom: 20px; }
@@ -113,7 +111,6 @@
     <div class="tip" id="tip">🐾 Wagging tails are on the way!</div>
   </div>
 
-  <!-- Floating circles -->
   <div class="floating" style="width: 50px; height: 50px; top: 10%; left: 15%; animation-duration: 25s;"></div>
   <div class="floating" style="width: 30px; height: 30px; top: 70%; left: 80%; animation-duration: 30s;"></div>
   <div class="floating" style="width: 40px; height: 40px; top: 40%; left: 60%; animation-duration: 20s;"></div>
@@ -159,7 +156,6 @@
     rotateMessages();
     rotateTips();
 
-    // Check server availability and redirect
     function checkServer() {
       fetch("/home/")
         .then(response => {
