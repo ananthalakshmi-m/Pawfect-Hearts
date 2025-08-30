@@ -11,42 +11,71 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #fff;
+      background: linear-gradient(135deg, #6fc1ff, #ffffff);
       font-family: Arial, sans-serif;
+      overflow: hidden;
     }
-    #spinner {
-      width: 60px; height: 60px;
-      border: 6px solid #ddd;
-      border-top: 6px solid #007bff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+
+    #loader-container {
+      text-align: center;
+      opacity: 1;
+      transition: opacity 0.5s ease;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+
+    .paw {
+      width: 50px; height: 50px;
+      background: url('https://cdn-icons-png.flaticon.com/512/616/616408.png') no-repeat center;
+      background-size: contain;
+      animation: bounce 0.6s infinite alternate;
+      margin: 0 auto;
     }
-    p { margin-top: 20px; color: #555; font-size: 1.1rem; }
+
+    .paw:nth-child(2) { animation-delay: 0.2s; }
+    .paw:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-20px); }
+    }
+
+    .loading-text {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #333;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
   </style>
 </head>
 <body>
-  <div>
-    <div id="spinner"></div>
-    <p>Loading Pawfect Hearts...</p>
+  <div id="loader-container">
+    <div class="paw"></div>
+    <div class="paw"></div>
+    <div class="paw"></div>
+    <p class="loading-text">Loading Pawfect Hearts...</p>
   </div>
 
   <script>
     function checkServer() {
-      fetch("/")
+      fetch("/home/")
         .then(response => {
           if(response.ok){
-            window.location.href = "/home/"; 
+            // smooth fade out
+            const loader = document.getElementById("loader-container");
+            loader.style.opacity = 0;
+            setTimeout(() => { window.location.href = "/home/"; }, 500);
           } else {
-            setTimeout(checkServer, 2000); 
+            setTimeout(checkServer, 2000);
           }
         })
         .catch(() => setTimeout(checkServer, 2000));
     }
 
+    // Start checking immediately
     checkServer();
   </script>
 </body>
