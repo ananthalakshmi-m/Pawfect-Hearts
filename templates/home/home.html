@@ -128,11 +128,22 @@
 
 <!-- Loader Script -->
 <script>
-  window.addEventListener("load", function(){
+  document.getElementById("loading-screen").style.display = "flex";
+  document.getElementById("page-content").style.display = "none";
+
+  window.addEventListener("load", function() {
+    setTimeout(function(){
+      document.getElementById("loading-screen").style.display = "none";
+      document.getElementById("page-content").style.display = "block";
+      window.scrollTo(0,0);
+    }, 500);
+  });
+
+  setTimeout(function() {
     document.getElementById("loading-screen").style.display = "none";
     document.getElementById("page-content").style.display = "block";
-    window.scrollTo(0, 0);
-  });
+  }, 7000);
 </script>
+
 
 {% endblock %}
