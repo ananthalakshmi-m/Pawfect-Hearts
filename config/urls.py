@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from . import views
 
 
 urlpatterns = [
@@ -30,6 +31,7 @@ urlpatterns = [
     path('blood/', include('blood.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('notifications/', include('notifications_pane.urls')),
+    path("ping/", views.ping, name="ping"),
 ]
 
 if settings.DEBUG:
