@@ -42,5 +42,5 @@
 Get a local copy to explore or contribute:  
 
 ```bash
-git clone https://github.com/your-username/pawfect_hearts.git
+git clone https://github.com/ananthalakshmi-m/pawfect_hearts.git
 cd pawfect_hearts
