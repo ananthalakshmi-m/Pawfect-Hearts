@@ -1,6 +1,6 @@
 # Pawfect Hearts 🐾  
 
-[Explore Pawfect Hearts – Check Out the Live Site!](https://ananthalakshmi-m.github.io/pawfect_hearts/)
+[Explore Pawfect Hearts – Check Out the Live Site!](https://anantha-lakshmi-m.github.io/pawfect_hearts/)
 
 ---
 
