@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% block title %}Manage Lost Dog{% endblock %}
+
+{% block content %}
+<style>
+  .manage-header {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    color: #343a40;
+    text-align: center;
+  }
+
+  .btn-custom {
+    min-width: 120px;
+    font-weight: 500;
+    padding: 0.5rem 1.1rem;
+  }
+
+  .info-label {
+    font-weight: 600;
+    color: #555;
+    width: 30%;
+    padding-right: 15px;
+    white-space: nowrap;
+  }
+
+  .info-value {
+    color: #333;
+    width: 70%;
+    word-break: break-word;
+  }
+
+  .table td {
+    padding: 0.65rem 0.9rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    background-color: #f8f9fa;
+  }
+
+  .dog-image {
+    max-height: 500px;
+    width: 90%;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .dog-info-box {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    height: 100%;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.02);
+  }
+
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.2rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .back-btn-wrapper {
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 767.98px) {
+    .info-label {
+      text-align: left;
+      padding-right: 0;
+      margin-top: 0.5rem;
+    }
+
+    .table td {
+      display: block;
+      width: 100%;
+      padding: 0.5rem 0;
+    }
+
+    .dog-info-box {
+      padding: 1.2rem;
+    }
+
+    .dog-image {
+      width: 90%;
+    }
+  }
+</style>
+
+<div class="container pt-3 pb-4">
+  <div class="row vh-60 align-items-center">
+
+    <!-- Dog Image & Back Button -->
+    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center h-100">
+      {% if dog.image %}
+        <img src="{{ dog.image.url }}" alt="{{ dog.name }}" class="img-fluid dog-image">
+      {% else %}
+        <div class="w-100 text-center bg-light rounded-3 py-5 text-muted border h-100 d-flex align-items-center justify-content-center" style="min-height: 320px;">
+          No Image Available
+        </div>
+      {% endif %}
+      <div class="back-btn-wrapper">
+        <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary btn-custom mt-3">← Back to Dashboard</a>
+      </div>
+    </div>
+
+    <!-- Info Section & Action Buttons -->
+    <div class="col-md-6">
+      <div class="dog-info-box">
+        <h2 class="manage-header">Manage Lost Dog</h2>
+
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td class="info-label">Name:</td>
+                <td class="info-value">{{ dog.name }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">Breed:</td>
+                <td class="info-value">{{ dog.breed|default:"Unknown" }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">Gender:</td>
+                <td class="info-value">{{ dog.gender|default:"Unknown" }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">Age:</td>
+                <td class="info-value">{{ dog.age|default:"Not specified" }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">Last Seen Location:</td>
+                <td class="info-value">{{ dog.last_seen_location }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">Date Lost:</td>
+                <td class="info-value">{{ dog.date_lost }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">Description:</td>
+                <td class="info-value">{{ dog.description|default:"No description." }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">Contact:</td>
+                <td class="info-value">{{ dog.contact_info|default:"Not provided" }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">Found Status:</td>
+                <td class="info-value">
+                  {% if dog.found %}
+                    <span class="badge bg-success">Found</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Still Missing</span>
+                  {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          {% if dog.found %}
+            <div class="alert alert-info mt-3 py-2 px-3 small" role="alert">
+              This report has been marked as <strong>Found</strong>. You can no longer make changes.
+            </div>
+          {% endif %}
+        </div>
+
+        {% if not dog.found %}
+          <div class="alert alert-warning mt-3 py-2 px-3 small" role="alert">
+            <strong>Status:</strong> This dog is currently marked as <span class="fw-semibold">Still Missing</span>. If the dog has been recovered, please update accordingly.
+          </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+          {% if dog.found %}
+            <button class="btn btn-secondary btn-custom" disabled>Edit</button>
+            <button class="btn btn-outline-success btn-custom" disabled>✅ Found</button>
+          {% else %}
+            <a href="{% url 'edit_lost_dog' dog.pk %}" class="btn btn-primary btn-custom">Edit</a>
+            <a href="{% url 'mark_lost_dog_found' dog.pk %}" class="btn btn-success btn-custom">Mark as Found</a>
+          {% endif %}
+          <a href="{% url 'delete_lost_dog' dog.pk %}" class="btn btn-danger btn-custom">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

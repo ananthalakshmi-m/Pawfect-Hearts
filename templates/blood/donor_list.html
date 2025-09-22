@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+  .donor-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .donor-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-register {
+    background-color: #2a9d8f;
+    border-color: #2a9d8f;
+    font-weight: 500;
+    color: white;
+  }
+
+  .btn-register:hover {
+    background-color: #21867a;
+    border-color: #21867a;
+  }
+
+  .btn-clear {
+    border: 1px solid #ccc;
+    color: #333;
+    background-color: #fff;
+    font-weight: 500;
+  }
+
+  .btn-clear:hover {
+    background-color: #f0f0f0;
+    border-color: #bbb;
+  }
+
+  .btn-filter {
+    background-color: #4b8ffd;
+    border-color: #4b8ffd;
+    color: white;
+    font-weight: 500;
+  }
+
+  .btn-filter:hover {
+    background-color: #2563eb;
+    border-color: #2563eb;
+  }
+
+  .filter-box {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 35px;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .filter-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  select.form-select {
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #2a9d8f;
+    box-shadow: 0 0 0 0.15rem rgba(42, 157, 143, 0.25);
+  }
+
+    .no-data-message {
+    font-style: italic;
+    text-align: center;
+    color: #495057;
+    background-color: #f8f9fa;
+    padding: 1rem 1.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 1.05rem;
+  }
+</style>
+
+<div class="container mt-5">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Available Dog Blood Donors</h2>
+    <a href="{% url 'register_donor' %}" class="btn btn-register">Register as Donor</a>
+  </div>
+
+  <form method="get" class="filter-box">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label for="breed" class="filter-label">Breed</label>
+        <select id="breed" name="breed" class="form-select w-100">
+          <option value="">All Breeds</option>
+          {% for breed in breeds %}
+            <option value="{{ breed }}" {% if request.GET.breed == breed %}selected{% endif %}>{{ breed }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="blood_type" class="filter-label">Blood Type</label>
+        <select id="blood_type" name="blood_type" class="form-select w-100">
+          <option value="">All Types</option>
+          {% for bt in blood_types %}
+            <option value="{{ bt }}" {% if request.GET.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="location" class="filter-label">Location</label>
+        <select id="location" name="location" class="form-select w-100">
+          <option value="">All Locations</option>
+          {% for loc in locations %}
+            <option value="{{ loc }}" {% if request.GET.location == loc %}selected{% endif %}>{{ loc }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-filter w-50">Apply</button>
+        <a href="{% url 'donor_list' %}" class="btn btn-clear w-50">Clear</a>
+      </div>
+    </div>
+  </form>
+
+  {% if donors %}
+    <div class="row">
+      {% for donor in donors %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <a href="{% url 'donor_detail' donor.id %}" class="text-decoration-none text-dark">
+            <div class="card donor-card h-100">
+              <div class="card-body">
+                <h5 class="card-title">{{ donor.dog_name }}</h5>
+                <p class="mb-1"><strong>Breed:</strong> {{ donor.breed }}</p>
+                <p class="mb-1"><strong>Blood Type:</strong> {{ donor.blood_type }}</p>
+                <p class="mb-1"><strong>Location:</strong> {{ donor.location }}</p>
+                <p class="mb-0 text-muted"><small>Owner: {{ donor.user.username }}</small></p>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-data-message">No donors match the selected filters.</div>
+  {% endif %}
+</div>
+
+{% endblock %}

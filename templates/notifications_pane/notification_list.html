@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">🔔 Notifications</h2>
+        <a href="{% url 'mark_all_as_read' %}" class="btn btn-outline-primary btn-sm">
+            Mark All as Read
+        </a>
+    </div>
+
+    {% if notifications %}
+    <div class="list-group shadow-sm rounded overflow-hidden">
+        {% for notification in notifications %}
+        <div class="list-group-item d-flex justify-content-between align-items-center
+            {% if not notification.is_read %}bg-warning-subtle{% else %}bg-light{% endif %} border-0 border-bottom py-3">
+
+            <div class="d-flex flex-column flex-grow-1">
+                <div class="fw-semibold mb-1">
+                    {% if not notification.is_read %}
+                        <i class="bi bi-envelope-fill text-primary me-1"></i>
+                    {% else %}
+                        <i class="bi bi-envelope-open text-secondary me-1"></i>
+                    {% endif %}
+                    {{ notification.message }}
+                </div>
+                <small class="text-muted">{{ notification.timestamp|timesince }} ago</small>
+            </div>
+
+            <div class="ms-3 text-end">
+                {% if notification.target %}
+                    <a href="{% url 'mark_notification_as_read' notification.pk %}" class="btn btn-sm btn-outline-primary">
+                        View
+                    </a>
+                {% else %}
+                    <button class="btn btn-sm btn-outline-secondary text-muted" disabled title="Target no longer available">
+                        Unavailable
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info mt-4" role="alert">
+        You have no notifications at the moment.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

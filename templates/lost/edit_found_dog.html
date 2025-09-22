@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% block title %}Edit Found Dog{% endblock %}
+
+{% block content %}
+<style>
+  .form-card {
+    border-radius: 1rem;
+    padding: 1.5rem 2.5rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .form-control:focus {
+    border-color: #3eab43;
+    box-shadow: 0 0 0 0.2rem rgba(62, 171, 67, 0.25);
+  }
+
+  .form-header {
+    font-weight: bold;
+    color: #3eab43;
+  }
+
+  .submit-btn {
+    background-color: #3eab43;
+    border: none;
+    transition: 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #2f8a34;
+  }
+
+  .table td, .table th {
+    vertical-align: middle;
+    padding: 0.7rem 1rem;
+  }
+
+  .eye-icon {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 1.2rem;
+    vertical-align: middle;
+    color: #6c757d;
+    cursor: pointer;
+  }
+
+  .eye-icon:hover {
+    color: #000;
+  }
+
+  td > *:not(.form-text):not(.text-danger) {
+    width: 100%;
+  }
+
+  .file-hint {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.3rem;
+  }
+
+  .file-hint.invalid {
+    color: red;
+  }
+
+  input[type="file"]#id_health_certificate,
+  input[type="file"]#id_image {
+    display: none;
+  }
+
+  .btn-outline-custom {
+    border-color: #3eab43;
+    color: #3eab43;
+  }
+
+  .btn-outline-custom:hover {
+    background-color: #3eab43;
+    color: #fff;
+  }
+
+</style>
+
+<div class="container d-flex justify-content-center py-4">
+  <div class="w-100" style="max-width: 750px;">
+    <div class="form-card">
+      <h2 class="text-center mb-4 form-header">Edit Found Dog</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="table table-borderless">
+          <tbody>
+            {% for field in form %}
+              <tr class="border-bottom">
+                <th class="text-end pe-3" style="width: 30%;">
+                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                </th>
+                <td>
+                  {% if field.name == "image" %}
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                      <label for="{{ field.id_for_label }}" class="btn btn-sm btn-outline-custom px-3" style="white-space: nowrap;">Change File</label>
+                      {% if dog.image %}
+                        <a href="{{ dog.image.url }}" target="_blank" class="eye-icon" title="Preview Image">
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      {% endif %}
+                    </div>
+                    <input type="file" name="image" id="{{ field.id_for_label }}" accept="image/png, image/jpeg">
+                    <div class="file-hint">(Only PNG, JPG, JPEG allowed)</div>
+                    {% for error in field.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+
+                  {% elif field.name == "breed" or field.name == "gender" %}
+                    <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select" required>
+                      {% for val, label in field.field.choices %}
+                        <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
+                      {% endfor %}
+                    </select>
+                    {% if field.help_text %}
+                      <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+
+                  {% else %}
+                    {% if field.field.widget.input_type == "checkbox" %}
+                      <div class="text-start">{{ field }}</div>
+                    {% else %}
+                      {{ field }}
+                    {% endif %}
+                    {% if field.help_text %}
+                      <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="text-end mt-4">
+          <button type="submit" class="btn px-4 py-2 rounded-pill submit-btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const certInput = document.getElementById('id_health_certificate');
+    const pdfLink = document.getElementById('pdfPreviewLink');
+    const pdfHint = document.getElementById('pdfHint');
+
+    if (certInput) {
+      certInput.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file && file.type === 'application/pdf') {
+          const fileURL = URL.createObjectURL(file);
+          pdfLink.href = fileURL;
+          pdfLink.style.display = 'inline-block';
+          pdfHint.classList.remove('invalid');
+          pdfHint.textContent = '(PDF only)';
+        } else {
+          pdfLink.href = '#';
+          pdfLink.style.display = 'none';
+          pdfHint.classList.add('invalid');
+          pdfHint.textContent = 'Only PDF files are allowed.';
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

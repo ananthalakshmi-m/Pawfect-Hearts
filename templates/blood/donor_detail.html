@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  .donor-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .donor-header {
+    text-align: left;
+    margin-bottom: 15px;
+    margin-top: -10px;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+
+  .donor-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f1f1;
+  }
+
+  .donor-label {
+    font-weight: 600;
+    color: #37474f;
+    width: 40%;
+    min-width: 140px;
+  }
+
+  .donor-value {
+    flex: 1;
+    color: #555;
+    word-break: break-word;
+  }
+
+  .donor-value a.btn {
+    padding: 4px 14px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+  }
+
+  .back-btn {
+    display: block;
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  @media (max-width: 576px) {
+    .donor-field {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .donor-label {
+      width: 100%;
+    }
+
+    .donor-value {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .back-btn {
+      text-align: left;
+    }
+  }
+</style>
+
+<div class="donor-container">
+  <div class="donor-header">{{ donor.dog_name }}</div>
+
+  <div class="donor-field">
+    <div class="donor-label">Breed:</div>
+    <div class="donor-value">{{ donor.breed }}</div>
+  </div>
+
+  <div class="donor-field">
+    <div class="donor-label">Age:</div>
+    <div class="donor-value">{{ donor.age }} years</div>
+  </div>
+
+  <div class="donor-field">
+    <div class="donor-label">Blood Type:</div>
+    <div class="donor-value">{{ donor.get_blood_type_display }}</div>
+  </div>
+
+  <div class="donor-field">
+    <div class="donor-label">Location:</div>
+    <div class="donor-value">{{ donor.location }}</div>
+  </div>
+
+  <div class="donor-field">
+    <div class="donor-label">Contact Info:</div>
+    <div class="donor-value">{{ donor.contact_info }}</div>
+  </div>
+
+  <div class="donor-field">
+    <div class="donor-label">Email:</div>
+    <div class="donor-value">{{ donor.email }}</div>
+  </div>
+
+  <div class="donor-field">
+    <div class="donor-label">Available:</div>
+    <div class="donor-value">{{ donor.available|yesno:"Yes,No" }}</div>
+  </div>
+
+  <div class="donor-field">
+    <div class="donor-label">Health Certificate:</div>
+    <div class="donor-value">
+      {% if donor.health_certificate %}
+        <a href="{{ donor.health_certificate.url }}" target="_blank" class="btn btn-outline-primary">View PDF</a>
+      {% else %}
+        <span>No certificate</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="back-btn">
+    <a href="{% url 'donor_list' %}" class="btn btn-secondary">← Back to All Donors</a>
+  </div>
+</div>
+{% endblock %}

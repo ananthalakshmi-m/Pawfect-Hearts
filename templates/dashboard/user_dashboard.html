@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% block title %}My Dashboard{% endblock %}
+
+{% block content %}
+<style>
+  .dashboard-title {
+    background: linear-gradient(to right, #4b2c20, #a9746e);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .section-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: #5c4033;
+    padding-bottom: 0.5rem;
+  }
+  .donor-dog-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #343a40;
+    margin-bottom: 0.8rem;
+  }
+  .card {
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid #eaeaea;
+    border-radius: 0.75rem;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.07);
+  }
+  .card-img-top {
+    height: 320px;
+    object-fit: cover;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+  }
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #343a40;
+  }
+  .card-text {
+    color: #6c757d;
+    margin-bottom: 0.4rem;
+  }
+  .section-actions {
+    text-align: right;
+    margin-bottom: 1rem;
+  }
+  .no-data-message {
+  font-style: italic;
+  text-align: center;
+  color: #495057;
+  background-color: #f8f9fa;
+  padding: 1rem 1.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-size: 1.05rem;
+  }
+  .btn
+  {
+    margin-top: -2rem;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.45em 0.6em;
+    border-radius: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+</style>
+
+<div class="container py-4">
+  <h2 class="text-center dashboard-title">My Dashboard</h2>
+
+  <!-- SECTION 1: Dogs for Adoption -->
+  <div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center">
+      <h3 class="section-header">Dogs You’ve Put Up for Adoption</h3>
+      <a href="{% url 'add_dog' %}" class="btn btn-outline-primary btn-sm">+ Add New</a>
+    </div>
+
+    {% if dogs %}
+      <div class="row">
+        {% for dog in dogs %}
+          <div class="col-md-4 mb-4 d-flex">
+            <a href="{% url 'manage_dog' dog.pk %}" class="w-100 text-decoration-none text-dark">
+              <div class="card shadow-sm h-100">
+                {% if dog.image %}
+                  <img src="{{ dog.image.url }}" class="card-img-top" alt="{{ dog.name }}">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ dog.name }}</h5>
+                  <p class="card-text"><strong>Breed:</strong> {{ dog.breed }}</p>
+                  <p class="card-text"><strong>Location:</strong> {{ dog.location }}</p>
+                  <p class="card-text">
+                    <strong>Adopted:</strong>
+                    {% if dog.is_adopted %}
+                      <span class="badge bg-success">Yes</span>
+                    {% else %}
+                      <span class="badge bg-secondary">No</span>
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-data-message">You haven't added any dogs for adoption yet.</div>
+    {% endif %}
+  </div>
+
+  <!-- SECTION 2: Lost Dogs You Reported -->
+  <div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center">
+      <h3 class="section-header">Lost Dogs You Reported</h3>
+      <a href="{% url 'report_lost_dog' %}" class="btn btn-outline-primary btn-sm">+ Report Lost Dog</a>
+    </div>
+
+    {% if lost_dogs %}
+      <div class="row">
+        {% for dog in lost_dogs %}
+          <div class="col-md-4 mb-4 d-flex">
+            <a href="{% url 'manage_lost_dog' dog.pk %}" class="text-decoration-none text-dark w-100">
+              <div class="card shadow-sm h-100">
+                {% if dog.image %}
+                  <img src="{{ dog.image.url }}" class="card-img-top" alt="Lost Dog">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ dog.name }}</h5>
+                  <p class="card-text"><strong>Breed:</strong> {{ dog.breed }}</p>
+                  <p class="card-text"><strong>Last Seen:</strong> {{ dog.last_seen_location }}</p>
+                  <p class="card-text"><strong>Date Lost:</strong> {{ dog.date_lost|date:"M d, Y" }}</p>
+                  <p class="card-text"><strong>Status:</strong>
+                    {% if dog.found %}
+                      <span class="badge bg-success">Found</span>
+                    {% else %}
+                      <span class="badge bg-danger">Still Missing</span>
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-data-message">You haven't reported any lost dogs yet.</div>
+    {% endif %}
+  </div>
+
+  <!-- SECTION 3: Found Dogs You Reported -->
+  <div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center">
+      <h3 class="section-header">Found Dogs You Reported</h3>
+      <a href="{% url 'report_found_dog' %}" class="btn btn-outline-primary btn-sm">+ Report Found Dog</a>
+    </div>
+
+    {% if found_dogs %}
+      <div class="row">
+        {% for dog in found_dogs %}
+          <div class="col-md-4 mb-4 d-flex">
+            <a href="{% url 'manage_found_dog' dog.pk %}" class="text-decoration-none text-dark w-100">
+              <div class="card shadow-sm h-100">
+                {% if dog.image %}
+                  <img src="{{ dog.image.url }}" class="card-img-top" alt="Found Dog">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ dog.breed|default:"Unknown Breed" }}</h5>
+                  <p class="card-text"><strong>Location:</strong> {{ dog.found_location }}</p>
+                  <p class="card-text"><strong>Date Found:</strong> {{ dog.date_found|date:"M d, Y" }}</p>
+                  <p class="card-text"><strong>Status:</strong>
+                    {% if dog.matched %}
+                      <span class="badge bg-success">Matched</span>
+                    {% else %}
+                      <span class="badge bg-warning text-dark">Unmatched</span>
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-data-message">You haven't reported any found dogs yet.</div>
+    {% endif %}
+  </div>
+
+  <!-- SECTION 4: Dogs Registered as Blood Donors -->
+  <div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center">
+      <h3 class="section-header">Dogs Registered as Blood Donors</h3>
+      <a href="{% url 'register_donor' %}" class="btn btn-outline-primary btn-sm">+ Add New</a>
+    </div>
+
+    {% if donors %}
+      <div class="row">
+        {% for donor in donors %}
+          <div class="col-md-4 mb-4 d-flex">
+            <a href="{% url 'manage_donor' donor.pk %}" class="w-100 text-decoration-none text-dark">
+              <div class="card shadow-sm h-100">
+                <div class="card-body">
+                  <h5 class="donor-dog-name">{{ donor.dog_name }}</h5>
+                  <p class="card-text"><strong>Breed:</strong> {{ donor.breed }}</p>
+                  <p class="card-text"><strong>Blood Type:</strong> {{ donor.blood_type }}</p>
+                  <p class="card-text"><strong>Location:</strong> {{ donor.location }}</p>
+                  <p class="card-text">
+                    <strong>Availability:</strong>
+                    {% if donor.available %}
+                      <span class="badge bg-success">Available</span>
+                    {% else %}
+                      <span class="badge bg-danger">Unavailable</span>
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-data-message">You haven't registered any dogs as blood donors yet.</div>
+    {% endif %}
+  </div>
+
+  <!-- SECTION 5: Blood Requests Made by You -->
+  <div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center">
+      <h3 class="section-header">Blood Requests You've Made</h3>
+      <a href="{% url 'request_blood' %}" class="btn btn-outline-primary btn-sm">+ Add New</a>
+    </div>
+
+    {% if blood_requests %}
+      <div class="row">
+        {% for request in blood_requests %}
+          <div class="col-md-6 col-lg-4 mb-4 d-flex">
+            <a href="{% url 'manage_request' request.id %}" class="w-100 text-decoration-none text-dark">
+              <div class="card shadow-sm h-100">
+                <div class="card-body">
+                  <h5 class="card-title">{{ request.dog_name }}</h5>
+                  <p class="card-text"><strong>Blood Type:</strong> {{ request.blood_type_needed }}</p>
+                  <p class="card-text"><strong>Location:</strong> {{ request.location }}</p>
+                  <p class="card-text"><strong>Requested On:</strong> {{ request.date_requested|date:"M d, Y" }}</p>
+                  <p class="card-text">
+                    <strong>Status:</strong>
+                    {% if request.is_fulfilled %}
+                      <span class="badge bg-success">Fulfilled</span>
+                    {% else %}
+                      <span class="badge bg-warning text-dark">Pending</span>
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-data-message">You haven't made any blood requests yet.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

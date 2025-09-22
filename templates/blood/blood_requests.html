@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}Blood Requests{% endblock %}
+
+{% block content %}
+<style>
+  .request-card {
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* border-left: 3px solid transparent; */
+    background-color: #ffffff;
+    position: relative;
+  }
+
+  .request-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .urgency-critical { border-left-color: #a50000; }
+  .urgency-high { border-left-color: #c84b57; }
+  .urgency-medium { border-left-color: #d9981c; }
+  .urgency-low { border-left-color: #51936b; }
+
+  .urgency-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.4rem;
+    font-weight: 500;
+    display: inline-block;
+  }
+
+  .badge-critical { background-color: #a50000; color: white; }
+  .badge-high { background-color: #c84b57; color: white; }
+  .badge-medium { background-color: #d9981c; color: white; }
+  .badge-low { background-color: #51936b; color: white; }
+
+  .critical-alert-box {
+    background-color: #a50000;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+  }
+
+  .critical-alert-box i { margin-right: 6px; }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+    .no-data-message {
+    font-style: italic;
+    text-align: center;
+    color: #495057;
+    background-color: #f8f9fa;
+    padding: 1rem 1.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 1.05rem;
+  }
+</style>
+
+<div class="container mt-5">
+  <!-- Title and Button -->
+  <div class="top-bar mb-5">
+    <h2 class="fw-semibold text-center text-md-start mb-3 mb-md-0">Current Blood Requests</h2>
+    <a href="{% url 'request_blood' %}" class="btn btn-danger fw-semibold">
+      <i class="bi bi-plus-circle me-1"></i> Request Blood
+    </a>
+  </div>
+
+  <!-- Blood Request Cards -->
+  {% if requests %}
+    <div class="row gx-4 gy-3 mt-4">
+      {% for req in requests %}
+        {% with req.urgency_level|lower as level %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <a href="{% url 'request_detail' req.id %}" class="text-decoration-none text-dark">
+            <div class="card request-card h-100
+              {% if level == 'critical' %}urgency-critical
+              {% elif level == 'high' %}urgency-high
+              {% elif level == 'medium' %}urgency-medium
+              {% else %}urgency-low{% endif %}">
+
+              {% if level == 'critical' %}
+                <div class="critical-alert-box">
+                  <i class="bi bi-exclamation-triangle-fill"></i> Critical – Immediate Attention Needed!
+                </div>
+              {% endif %}
+
+              <div class="card-body {% if level == 'critical' %}pt-3{% endif %}">
+                <h4 class="card-title"><strong>{{ req.dog_name }}</strong></h4>
+                <p class="mb-1"><strong>Blood Type:</strong> {{ req.blood_type_needed }}</p>
+                <p class="mb-1"><strong>Reason:</strong> {{ req.reason }}</p>
+                <p class="mb-1"><strong>Requested By:</strong> {{ req.user.username }}</p>
+                <p class="mb-2">
+                  <span class="urgency-badge
+                    {% if level == 'critical' %}badge-critical
+                    {% elif level == 'high' %}badge-high
+                    {% elif level == 'medium' %}badge-medium
+                    {% else %}badge-low{% endif %}">
+                    {{ req.urgency_level|title }} Urgency
+                  </span>
+                </p>
+                <p class="text-muted mb-0">
+                  <small>Requested on {{ req.date_requested|date:"M j, Y" }}</small>
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-data-message">No blood requests yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

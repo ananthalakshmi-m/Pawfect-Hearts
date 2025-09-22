@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Confirm Fulfillment{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card p-4 shadow-lg rounded-4" style="max-width: 600px; margin: auto;">
+    <h3 class="mb-4 text-center text-primary">Confirm Fulfillment</h3>
+    <p class="fs-5 text-center">
+      Are you sure you want to mark the request for <strong>{{ blood_request.dog_name }}</strong> as fulfilled?
+    </p>
+
+    <div class="d-flex justify-content-center mt-4 gap-3">
+      <form method="post" action="{% url 'mark_request_fulfilled' blood_request.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success px-4">Yes, Mark as Fulfilled</button>
+      </form>
+      <a href="{% url 'manage_request' blood_request.pk %}" class="btn btn-outline-secondary px-4">Cancel</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

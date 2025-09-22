@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block title %}Edit Donor{% endblock %}
+
+{% block content %}
+<style>
+  .form-card {
+    border-radius: 1rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .form-control:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  }
+
+  .form-header {
+    font-weight: bold;
+    color: #dc3545;
+  }
+
+  .submit-btn {
+    background-color: #dc3545;
+    border: none;
+    transition: 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #bb2d3b;
+  }
+
+  .table td, .table th {
+    vertical-align: middle;
+    padding: 0.75rem 1rem;
+  }
+
+  .eye-icon {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 1.2rem;
+    vertical-align: middle;
+    color: #6c757d;
+    cursor: pointer;
+  }
+
+  .eye-icon:hover {
+    color: #000;
+  }
+
+  td > *:not(.form-text):not(.text-danger) {
+    width: 100%;
+  }
+
+  .d-flex.align-items-center > input {
+    flex-grow: 1;
+  }
+
+  .file-hint {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.3rem;
+  }
+
+  .file-hint.invalid {
+    color: red;
+  }
+
+  input[type="file"]#id_health_certificate {
+    display: none;
+  }
+</style>
+
+<div class="container d-flex justify-content-center py-5">
+  <div class="w-100" style="max-width: 750px;">
+    <div class="form-card">
+      <h2 class="text-center mb-4 form-header">Edit {{ donor.dog_name }}</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="table table-borderless">
+          <tbody>
+            {% for field in form %}
+              {% if field.name != 'available' %}
+                <tr class="border-bottom">
+                  <th class="text-end pe-3" style="width: 30%;">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                  </th>
+                  <td>
+                    {% if field.name == "image" %}
+                      <label for="{{ field.id_for_label }}" class="btn btn-sm btn-outline-danger mb-2">Choose Image</label>
+                      <input type="file" name="image" id="{{ field.id_for_label }}" style="display: none;">
+                      {% if donor.image %}
+                        <div><a href="{{ donor.image.url }}" target="_blank" class="btn btn-outline-secondary btn-sm">Open Image</a></div>
+                      {% endif %}
+                      {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+
+                    {% elif field.name == 'health_certificate' %}
+                      <div class="d-flex align-items-center gap-2">
+                        <label for="{{ field.id_for_label }}" class="btn btn-outline-secondary btn-sm">Change File</label>
+                        <input type="file" name="health_certificate" id="{{ field.id_for_label }}" accept="application/pdf" style="display: none;">
+                        {% if donor.health_certificate %}
+                          <a href="{{ donor.health_certificate.url }}" id="pdfPreviewLink" target="_blank" class="eye-icon" title="View Certificate">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                        {% else %}
+                          <a href="#" id="pdfPreviewLink" target="_blank" style="display:none;" class="eye-icon" title="View Certificate">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                        {% endif %}
+                      </div>
+                      <div id="pdfHint" class="file-hint">(PDF only)</div>
+
+                    {% elif field.name == "breed" %}
+                      <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select" required>
+                        {% for val, label in field.field.choices %}
+                          <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                      </select>
+                      {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                      {% endif %}
+                      {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+
+                    {% else %}
+                      {% if field.field.widget.input_type == "checkbox" %}
+                        <div class="text-start">{{ field }}</div>
+                      {% else %}
+                        {{ field }}
+                      {% endif %}
+                      {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                      {% endif %}
+                      {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="text-end mt-4">
+          <button type="submit" class="btn btn-danger px-4 py-2 rounded-pill submit-btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const certInput = document.getElementById('id_health_certificate');
+    const pdfLink = document.getElementById('pdfPreviewLink');
+    const pdfHint = document.getElementById('pdfHint');
+
+    if (certInput) {
+      certInput.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file && file.type === 'application/pdf') {
+          const fileURL = URL.createObjectURL(file);
+          pdfLink.href = fileURL;
+          pdfLink.style.display = 'inline-block';
+          pdfHint.classList.remove('invalid');
+          pdfHint.textContent = '(PDF only)';
+        } else {
+          pdfLink.href = '#';
+          pdfLink.style.display = 'none';
+          pdfHint.classList.add('invalid');
+          pdfHint.textContent = 'Only PDF files are allowed.';
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

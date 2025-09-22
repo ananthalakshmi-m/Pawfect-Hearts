@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Man’s Best Friend{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.0.0/mdb.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        padding-top: 50px;
+        background-color: #f8f9fa;
+      }
+
+      #sidebar {
+        position: fixed;
+        top: 0;
+        left: -260px;
+        width: 260px;
+        height: 100%;
+        background-color: #212529;
+        color: white;
+        padding-top: 70px;
+        transition: left 0.3s ease;
+        z-index: 1050;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+      }
+      #sidebar.active { left: 0; }
+
+      #sidebar .nav-link {
+        color: white;
+        padding: 0.9rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        margin: 0.4rem 0.5rem;
+        display: flex;
+        align-items: center;
+        transition: background 0.2s ease;
+      }
+      #sidebar .nav-link i { margin-right: 10px; }
+      #sidebar .nav-link:hover { background-color: #495057; }
+
+      #sidebar .auth-section {
+        margin-top: 2rem;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+      }
+      #sidebar .auth-section span {
+        margin-bottom: 1rem;
+        margin-top: 0.5rem;
+        display: block;
+      }
+      #sidebar .auth-section .btn:first-child { margin-top: 0.5rem; }
+      #sidebar .auth-section .btn + .btn { margin-top: 0.8rem; }
+
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        transition: width 0.3s ease;
+        z-index: 1040;
+      }
+      #overlay.active { width: 100%; }
+
+      .sidebar-toggle {
+        display: none;
+        font-size: 1.5rem;
+        background: none;
+        border: none;
+        color: white;
+      }
+
+      @media (min-width: 992px) {
+        .desktop-nav { display: flex !important; align-items: center; }
+        .sidebar-toggle { display: none; }
+        #sidebar { display: none; }
+        .desktop-nav ul.navbar-nav li.nav-item {
+          margin-right: 15px;
+          margin-left: 10px;
+        }
+      }
+
+      @media (max-width: 991.98px) {
+        .desktop-nav { display: none !important; }
+        .sidebar-toggle { display: block; }
+      }
+
+      .badge-position {
+        top: 0;
+        right: 0;
+        transform: translate(50%, -50%);
+      }
+
+      .welcome-text { margin-right: 12px; }
+
+      .desktop-nav .nav-link.text-muted {
+        color: #adb5bd !important;
+        transition: color 0.2s ease;
+      }
+      .desktop-nav .nav-link.text-muted:hover { color: #e9ecef !important; }
+
+      .alert.fade { opacity: 0; transition: opacity 0.5s ease-out; }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark bg-dark shadow-sm fixed-top">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand" href="/">🐾 Pawfect Hearts</a>
+        <div class="desktop-nav d-flex flex-grow-1 justify-content-between align-items-center">
+          <ul class="navbar-nav d-flex flex-row mb-0">
+            <li class="nav-item"><a class="nav-link text-muted" href="{% url 'adoption_list' %}">Adopt</a></li>
+            <li class="nav-item"><a class="nav-link text-muted" href="{% url 'lost_dogs_list' %}">Lost Dogs</a></li>
+            <li class="nav-item"><a class="nav-link text-muted" href="{% url 'found_dogs_list' %}">Found Dogs</a></li>
+            <li class="nav-item"><a class="nav-link text-muted" href="{% url 'donor_list' %}">Blood Donors</a></li>
+            <li class="nav-item"><a class="nav-link text-muted" href="{% url 'blood_requests' %}">Blood Requests</a></li>
+            <li class="nav-item"><a class="nav-link text-muted" href="{% url 'user_dashboard' %}">Dashboard</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-3">
+            {% if user.is_authenticated %}
+              <a class="nav-link text-white position-relative" href="{% url 'notification_list' %}">
+                <i class="fas fa-bell"></i>
+                {% if unread_count > 0 %}
+                  <span class="badge rounded-pill bg-danger position-absolute badge-position">{{ unread_count }}</span>
+                {% endif %}
+              </a>
+              <span class="navbar-text text-white welcome-text">Welcome, {{ user.username }}!</span>
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+              </form>
+            {% else %}
+              <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">Login</a>
+              <a class="btn btn-light btn-sm" href="{% url 'signup' %}">Sign Up</a>
+            {% endif %}
+          </div>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+      </div>
+    </nav>
+
+    <div id="sidebar">
+      <ul class="navbar-nav flex-column px-2">
+        <li class="nav-item"><a class="nav-link" href="{% url 'adoption_list' %}"><i class="fas fa-dog"></i> Adopt</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'lost_dogs_list' %}"><i class="fas fa-search"></i> Lost Dogs</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'found_dogs_list' %}"><i class="fas fa-paw"></i> Found Dogs</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'donor_list' %}"><i class="fas fa-heartbeat"></i> Blood Donors</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'blood_requests' %}"><i class="fas fa-tint"></i> Blood Requests</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i> Dashboard</a></li>
+        {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'notification_list' %}"><i class="fas fa-bell"></i> Notifications
+            {% if unread_count > 0 %}
+              <span class="badge rounded-pill bg-danger ms-2">{{ unread_count }}</span>
+            {% endif %}
+          </a></li>
+        {% endif %}
+      </ul>
+      <div class="auth-section">
+        {% if user.is_authenticated %}
+          <span>Welcome, {{ user.username }}!</span>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-light btn-sm w-100 mt-2">Logout</button>
+          </form>
+        {% else %}
+          <a class="btn btn-outline-light btn-sm w-100 mb-2" href="{% url 'login' %}">Login</a>
+          <a class="btn btn-light btn-sm w-100" href="{% url 'signup' %}">Sign Up</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div id="overlay"></div>
+
+    <div class="container mt-4" id="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} auto-dismiss" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.0.0/mdb.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init();
+      setTimeout(() => {
+        document.querySelectorAll('.alert.auto-dismiss').forEach(alert => {
+          alert.classList.add('fade');
+          setTimeout(() => alert.remove(), 500);
+        });
+      }, 10000);
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      const toggleBtn = document.getElementById('sidebarToggle');
+      toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+      });
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Blood Request Details{% endblock %}
+
+{% block content %}
+<style>
+  .request-container {
+    max-width: 500px;
+    margin: 2rem auto;
+  }
+
+  .request-card {
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    background-color: #fff;
+  }
+
+  .request-card h4 {
+    font-weight: 600;
+    color: #dc3545;
+    margin-bottom: 1.5rem;
+    text-align: left;
+    font-size: 1.4rem;
+  }
+
+  .request-item {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    color: #343a40;
+  }
+
+  .request-item strong {
+    font-weight: 600;
+    margin-right: 8px;
+    color: #000;
+  }
+
+  .text-muted small {
+    font-size: 0.85rem;
+  }
+
+  .back-btn {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .btn-outline-danger {
+    padding: 0.5rem 1.4rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+  }
+</style>
+
+<div class="request-container">
+  <div class="request-card">
+    <h4>{{ blood_request.dog_name }} - Blood Request</h4>
+
+    <div class="request-item"><strong>Breed:</strong>{{ blood_request.breed|default:"N/A" }}</div>
+    <div class="request-item"><strong>Age:</strong>{{ blood_request.age }} years</div>
+    <div class="request-item"><strong>Blood Type Needed:</strong>{{ blood_request.blood_type_needed }}</div>
+    <div class="request-item"><strong>Urgency:</strong>{{ blood_request.get_urgency_level_display  }}</div>
+    <div class="request-item"><strong>Reason:</strong>{{ blood_request.reason }}</div>
+    <hr>
+    <div class="request-item"><strong>Contact Info:</strong>{{ blood_request.contact_info }}</div>
+    <div class="request-item"><strong>Location:</strong>{{ blood_request.location|default:"Not specified" }}</div>
+    <div class="request-item"><strong>Requested By:</strong>{{ blood_request.user.username }}</div>
+    <div class="request-item text-muted"><small>Requested on {{ blood_request.date_requested|date:"F j, Y, g:i a" }}</small></div>
+
+    <div class="back-btn">
+      <a href="{% url 'blood_requests' %}" class="btn btn-outline-danger">← Back to Requests</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

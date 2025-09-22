@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% block title %}Lost Dog Details{% endblock %}
+
+{% block content %}
+<style>
+  .lost-dog-page {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: 1rem 1rem;
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+
+  .lost-dog-image-container,
+  .lost-dog-details {
+    flex: 1 1 48%;
+    box-sizing: border-box;
+  }
+
+  .lost-dog-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .lost-dog-image-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lost-dog-image-container img {
+    width: 100%;
+    height: auto;
+    max-height: 515px;
+    object-fit: contain;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1rem;
+  }
+
+  .lost-dog-no-img {
+    width: 100%;
+    padding: 60px 20px;
+    border-radius: 12px;
+    background-color: #f0f0f0;
+    text-align: center;
+    color: #777;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1rem;
+  }
+
+  .back-btn {
+    padding: 10px 16px;
+    background-color: #e6f4ea;
+    color: #2e7d32;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  .back-btn:hover {
+    background-color: #c5eccf;
+    transform: translateY(-1px);
+  }
+
+  .lost-dog-details {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .lost-dog-details h2 {
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+    color: #222;
+  }
+
+  .lost-dog-subheading {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+
+  .lost-dog-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .lost-dog-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #eee;
+    font-size: 1rem;
+    color: #444;
+    vertical-align: top;
+  }
+
+  .lost-dog-table td:first-child {
+    font-weight: 600;
+    width: 30%;
+    color: #555;
+  }
+
+  .description-cell {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .status-box {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .status-box.found {
+    background-color: #e6f4ea;
+    color: #2e7d32;
+    border-left: 5px solid #81c784;
+  }
+
+  .status-box.missing {
+    background-color: #fdecea;
+    color: #c62828;
+    border-left: 5px solid #f44336;
+  }
+
+  .cta-box {
+    margin-top: 1.5rem;
+    padding: 1rem 1.2rem;
+    background-color: #fff8e1;
+    color: #8a6d3b;
+    border-left: 5px solid #ffecb3;
+    border-radius: 8px;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .lost-dog-page {
+      flex-direction: column;
+    }
+
+    .lost-dog-image-container,
+    .lost-dog-details {
+      flex: 1 1 100%;
+    }
+
+    .lost-dog-details {
+      padding: 1.5rem;
+    }
+  }
+</style>
+
+<div class="lost-dog-page">
+
+  <!-- Image Section -->
+  <div class="lost-dog-image-container">
+    <div class="lost-dog-image-wrapper">
+      {% if dog.image %}
+        <img src="{{ dog.image.url }}" alt="{{ dog.name }}">
+      {% else %}
+        <div class="lost-dog-no-img">No Image Available</div>
+      {% endif %}
+      <a href="{% url 'lost_dogs_list' %}" class="back-btn">← Back to Lost Dogs</a>
+    </div>
+  </div>
+
+  <!-- Dog Details Section -->
+  <div class="lost-dog-details">
+    <h2>{{ dog.name }}</h2>
+    <p class="lost-dog-subheading">🐾 Help us bring them home</p>
+    <table class="lost-dog-table">
+      <tr><td>Breed:</td><td>{{ dog.breed|default:"Unknown" }}</td></tr>
+      <tr><td>Gender:</td><td>{{ dog.gender|default:"Unknown" }}</td></tr>
+      <tr><td>Age:</td><td>{{ dog.age|default:"Not specified" }}</td></tr>
+      <tr>
+        <td>Description:</td>
+        <td class="description-cell">{{ dog.description|default:"No description provided." }}</td>
+      </tr>
+      <tr><td>Last Seen:</td><td>{{ dog.last_seen_location }}</td></tr>
+      <tr><td>Date Lost:</td><td>{{ dog.date_lost }}</td></tr>
+      <tr><td>Contact Info:</td><td>{{ dog.contact_info|default:"No contact provided" }}</td></tr>
+      <tr><td>Reported By:</td><td>{{ dog.owner.get_full_name|default:dog.owner.username }}</td></tr>
+    </table>
+
+    <div class="status-box {% if dog.found %}found{% else %}missing{% endif %}">
+      {% if dog.found %}
+        ✅ Good news! This dog has been found.
+      {% else %}
+        ❌ Still missing — please help by spreading the word!
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

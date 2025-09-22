@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}Register Dog as Blood Donor{% endblock %}
+
+{% block content %}
+<style>
+  .form-card {
+    border-radius: 1rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .form-control:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  }
+
+  .form-header {
+    font-weight: bold;
+    color: #dc3545;
+  }
+
+  .submit-btn {
+    background-color: #dc3545;
+    border: none;
+    transition: 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #bb2d3b;
+  }
+
+  .table td, .table th {
+    vertical-align: middle;
+    padding: 0.75rem 1rem;
+  }
+
+  .eye-icon {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 1.2rem;
+    vertical-align: middle;
+    color: #6c757d;
+    cursor: pointer;
+  }
+
+  .eye-icon:hover {
+    color: #000;
+  }
+
+  td > *:not(.form-text):not(.text-danger) {
+    width: 100%;
+  }
+
+  .d-flex.align-items-center > input {
+    flex-grow: 1;
+  }
+</style>
+
+<div class="container d-flex justify-content-center py-5">
+  <div class="w-100" style="max-width: 750px;">
+    <div class="form-card">
+      <h2 class="text-center mb-4 form-header">Register Your Dog as a Blood Donor</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="table table-borderless">
+          <tbody>
+            {% for field in form %}
+              <tr class="border-bottom">
+                <th class="text-end pe-3" style="width: 30%;">
+                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                </th>
+                <td>
+                  {% if field.name == "health_certificate" %}
+                    <div class="d-flex align-items-center">
+                      {{ field }}
+                      <a href="#" id="pdfLink" target="_blank" style="display:none;" class="eye-icon" title="Preview PDF">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                    </div>
+                    <div class="form-text">Only PDF files allowed</div>
+                    {% for error in field.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+
+                  {% elif field.name == "breed" %}
+                    <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select">
+                      {% for val, label in field.field.choices %}
+                        <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
+                      {% endfor %}
+                    </select>
+                    {% if field.help_text %}
+                      <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+
+                  {% else %}
+                    {% if field.field.widget.input_type == "checkbox" %}
+                      <div class="text-start">
+                        {{ field }}
+                      </div>
+                    {% else %}
+                      {{ field }}
+                    {% endif %}
+                    {% if field.help_text %}
+                      <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="text-end mt-4">
+          <button type="submit" class="btn btn-danger px-4 py-2 rounded-pill submit-btn">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const certInput = document.querySelector('input[name="health_certificate"]');
+    const pdfLink = document.getElementById('pdfLink');
+
+    if (certInput) {
+      certInput.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file && file.type === 'application/pdf') {
+          const fileURL = URL.createObjectURL(file);
+          pdfLink.href = fileURL;
+          pdfLink.style.display = 'inline-block';
+        } else {
+          pdfLink.href = '#';
+          pdfLink.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}
