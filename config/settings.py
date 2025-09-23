@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from pathlib import Path
 import os
-from dotenv import load_dotenv
+from pathlib import Path
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
@@ -21,10 +20,6 @@ from cloudinary_storage.storage import MediaCloudinaryStorage
 from cloudinary_storage.storage import StaticHashedCloudinaryStorage
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-dotenv_path = os.path.join(BASE_DIR, '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
