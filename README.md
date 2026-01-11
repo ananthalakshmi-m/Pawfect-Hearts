@@ -10,12 +10,12 @@
 ---
 
 ## Key Features  
-- 🏡 **Dog Adoption**: Browse available dogs, view detailed profiles, filter by breed/location, and mark favorites.  
-- 📍 **Lost & Found**: Submit reports for lost or found dogs with images and location tracking.  
-- 🩸 **Dog Blood Donation**: Register donor dogs, request blood, and notify matching donors automatically.  
-- 🔔 **Notifications**: Real-time alerts for donor matches and lost/found updates.  
-- 📷 **Media Uploads**: Upload images for adoption profiles and reports.  
-- 📊 **Professional UI**: Modern design using Bootstrap 5 and Material Kit for an attractive, responsive interface.  
+- **Dog Adoption**: Browse available dogs, view detailed profiles, filter by breed/location, and mark favorites.  
+- **Lost & Found**: Submit reports for lost or found dogs with images and location tracking.  
+- **Dog Blood Donation**: Register donor dogs, request blood, and notify matching donors automatically.  
+- **Notifications**: Real-time alerts for donor matches and lost/found updates.  
+- **Media Uploads**: Upload images for adoption profiles and reports.  
+- **Professional UI**: Modern design using Bootstrap 5 and Material Kit for an attractive, responsive interface.  
 
 ---
 
