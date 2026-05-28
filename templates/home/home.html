@@ -1,99 +1,606 @@
 {% extends 'base.html' %}
+
 {% block title %}Home | Man’s Best Friend{% endblock %}
 
 {% block content %}
-<!-- Welcome Section -->
-<section class="py-5" style="background-color: #f3f9ff; width: 100vw; margin-left: calc(-51vw + 50%); margin-right: calc(-50vw + 50%);" data-aos="fade-up">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- Styles -->
+<style>
+/* General */
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Lora', serif;
+}
+
+.text-pink {
+    color: #FF6F91 !important;
+}
+
+/* Buttons */
+.btn-pink {
+    background-color: #FF6F91;
+    border: 1px solid #FF6F91;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 26px;
+    transition: transform 0.3s ease;
+}
+
+.btn-pink:hover {
+    transform: translateY(-3px);
+}
+
+.btn-outline-pink {
+    border: 1px solid #FF6F91;
+    color: #FF6F91;
+    border-radius: 10px;
+    padding: 10px 26px;
+    transition: transform 0.3s ease;
+}
+
+.btn-outline-pink:hover {
+    transform: translateY(-3px);
+    border: 1px solid #000000;
+}
+
+/* Adoption Card */
+.adoption-card {
+    background: #ffffff;
+    border: 1px solid #ffe2eb;
+    transition: all 0.3s ease;
+}
+
+.adoption-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+/* Hover Card */
+.hover-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.hover-card img {
+    transition: transform 0.5s ease;
+}
+
+.hover-card:hover img {
+    transform: scale(1.05);
+}
+
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: none;
+    color: #fff;
+    text-align: left;
+    padding: 15px;
+    opacity: 1;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.overlay-text {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hover-card:hover .overlay-text {
+    font-size: 1.5rem;
+}
+
+/* Carousel */
+.carousel-inner, 
+.carousel, 
+.carousel-item, 
+.card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(50%) sepia(60%) saturate(500%) hue-rotate(310deg);
+}
+
+.carousel-control-prev, 
+.carousel-control-next {
+    width: auto;
+    height: auto;
+    background: none;
+    border: none;
+}
+
+.carousel-control-prev:hover, 
+.carousel-control-next:hover {
+    background: none;
+}
+
+.fade-in {
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Wider container but not full width */
+.container.custom-container {
+    max-width: 1350px; /* Adjust as needed */
+}
+
+/* -------------------------- */
+/* Found Dogs Card Styling (like Adoption Card) */
+.found-dogs-card {
+    background: #f9f9f9; /* white background */
+    border: 1px solid #cbc8c8;
+    border-radius: 16px;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.found-dogs-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.found-dogs-card h4 {
+    font-family: 'Lora', serif;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.75rem;
+}
+
+.found-dogs-card p {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+/* Button Row */
+.button-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center; /* center buttons */
+}
+
+.button-row .btn {
+    flex: none;
+    margin-top: 5px;
+    white-space: nowrap;
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 10px 16px;
+    min-width: 140px;
+    transition: all 0.3s ease;
+}
+
+.button-row .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-primary,
+.btn-info,
+.btn-warning,
+.btn-danger {
+    color: #fff !important;
+}
+
+/* Lost dog text styling */
+.lost-dog-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+/* Responsive tweak */
+@media (max-width: 768px) {
+    .button-row {
+        flex-direction: column;
+    }
+}
+</style>
+
+<!-- Welcome Section (unchanged) -->
+<section class = "py-5" style="background-color: #ecf6ff; width: 100.5vw; margin-left: calc(-51vw + 50%); margin-right: calc(-50vw + 50%);"
+         data-aos="fade-up">
     <div class="text-center px-4 px-md-5">
         <h1 class="display-4 fw-bold mb-3 text-dark">
             🐾 Welcome to <span class="text-primary">Pawfect Hearts</span>
         </h1>
-        <p class="fs-5 text-muted mb-4">Connecting people, pets, and possibilities — Adopt, report, or help save a life.</p>
+        <p class="fs-5 text-muted mb-4">
+            Connecting people, pets, and possibilities — Adopt, report, or help save a life.
+        </p>
         <div class="d-flex flex-wrap justify-content-center gap-3">
-            <a href="{% url 'adoption_list' %}" class="btn btn-outline-primary btn-lg px-4"><i class="fas fa-dog me-1"></i>Adopt a Dog</a>
-            <a href="{% url 'report_lost_dog' %}" class="btn btn-outline-warning btn-lg px-4"><i class="fas fa-search me-1"></i>Report Lost Dog</a>
-            <a href="{% url 'report_found_dog' %}" class="btn btn-outline-info text-dark btn-lg px-4"><i class="fas fa-map-pin me-1"></i>Report Found Dog</a>
-            <a href="{% url 'register_donor' %}" class="btn btn-outline-danger btn-lg px-4"><i class="fas fa-heart me-1"></i>Donate Blood</a>
-            <a href="{% url 'request_blood' %}" class="btn btn-outline-success btn-lg px-4"><i class="fas fa-ambulance me-1"></i>Request Blood</a>
+            <a href="{% url 'adoption_list' %}" class="btn btn-outline-primary btn-lg px-4">
+                <i class="fas fa-dog me-1"></i>Adopt a Dog
+            </a>
+            <a href="{% url 'report_lost_dog' %}" class="btn btn-outline-warning btn-lg px-4">
+                <i class="fas fa-search me-1"></i>Report Lost Dog
+            </a>
+            <a href="{% url 'report_found_dog' %}" class="btn btn-outline-info text-dark btn-lg px-4">
+                <i class="fas fa-map-pin me-1"></i>Report Found Dog
+            </a>
+            <a href="{% url 'register_donor' %}" class="btn btn-outline-danger btn-lg px-4">
+                <i class="fas fa-heart me-1"></i>Donate Blood
+            </a>
+            <a href="{% url 'request_blood' %}" class="btn btn-outline-success btn-lg px-4">
+                <i class="fas fa-ambulance me-1"></i>Request Blood
+            </a>
         </div>
     </div>
 </section>
 
-<div class="my-5"></div>
-
-<!-- About Section -->
-<section class="py-5" style="background-color: #fff5f0;" data-aos="fade-up">
-    <div class="container px-5">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6 text-center" data-aos="fade-right">
-                <img src="https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785074_1280.jpg" alt="Dog cuddling" class="img-fluid rounded-4 shadow" style="max-height: 400px; object-fit: cover;">
+<!-- Adoption Highlights Section (unchanged) -->
+<section class="py-5 mt-0 position-relative" style="background-color: #f9f9f9; width: 100.5vw; margin-left: calc(-51vw + 50%); margin-right: calc(-50vw + 50%);" data-aos="fade-up">
+    <div class="container px-4 px-md-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-2" style="font-size: 2rem;">🐾 Adoption Highlights</h2>
+            <p class="text-muted mb-0" style="max-width: 650px; margin: 0 auto;">
+                Discover our lovely dogs ready for their forever homes. Maybe your next furry friend is here!
+            </p>
+        </div>
+        {% if dogs %}
+        <div class="row align-items-center">
+            <!-- Left Carousel -->
+            <div class="col-lg-6 d-flex justify-content-center position-relative mb-4 mb-lg-0">
+                <div id="adoptionCarousel" class="carousel slide position-relative w-100" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for dog in dogs %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <div class="d-flex justify-content-center">
+                                <a href="{% url 'dog_detail' dog.id %}" class="text-decoration-none">
+                                    <div class="card border-0 rounded-4 overflow-hidden hover-card position-relative">
+                                        {% if dog.image %}
+                                        <img src="{{ dog.image.url }}" alt="{{ dog.name }}" 
+                                             class="card-img-top"
+                                             style="height: 450px; width: 420px; object-fit: cover; transition: transform 0.5s ease;">
+                                        <div class="overlay d-flex flex-column justify-content-end p-3">
+                                            <h5 class="text-white mb-1 fw-bold overlay-text">{{ dog.name }}</h5>
+                                            <p class="text-white small mb-0 overlay-text">{{ dog.breed }}</p>
+                                        </div>
+                                        {% else %}
+                                        <div class="d-flex align-items-center justify-content-center text-secondary bg-light rounded-4" 
+                                             style="height: 450px; width: 400px;">
+                                            <i class="fas fa-paw fa-3x"></i>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#adoptionCarousel" data-bs-slide="prev"
+                            style="position: absolute; top: 50%; left: 25px; transform: translateY(-50%); z-index: 10;">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#adoptionCarousel" data-bs-slide="next"
+                            style="position: absolute; top: 50%; right: 25px; transform: translateY(-50%); z-index: 10;">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
             </div>
-            <div class="col-lg-6" data-aos="fade-left">
-                <h2 class="fw-bold mb-3 text-danger">What is Pawfect Hearts?</h2>
-                <p class="fs-5 text-muted">
-                    Pawfect Hearts is a compassionate platform that helps connect people to pups through dog adoption, lost/found reporting, and blood donation. 
-                </p>
-                <p class="fs-5 text-muted">
-                    Join a growing community that believes every dog deserves love, safety, and care — and every human deserves a loyal best friend.
-                </p>
+
+            <!-- Right Panel -->
+            <div class="col-lg-6 text-center">
+                <div class="adoption-card p-5 rounded-4 shadow-sm fade-in">
+                    <h2 class="fw-bold text-dark mb-3">
+                        Adopt, Love, <span class="text-pink">Repeat 💕</span>
+                    </h2>
+                    <p class="text-muted fs-6 mb-4" style="max-width: 500px; margin: 0 auto;">
+                        Every dog deserves a home filled with love. Browse our available pups and find your perfect match today. 
+                        You can even save your <span class="fw-semibold text-pink">favorites</span> to revisit later!
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'adoption_list' %}" class="btn btn-pink btn-square fw-semibold hover-translate">
+                            <i class="fas fa-paw me-2"></i>View All
+                        </a>
+                        <a href="{% url 'favorite_dogs' %}" class="btn btn-outline-pink btn-square fw-semibold hover-translate">
+                            <i class="fas fa-heart me-2"></i>Favorites</a>
+                    </div>
+
+                    <div class="mt-4 small text-muted fst-italic">
+                        “Saving one dog won’t change the world, but surely for that one dog, the world will change forever.”
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Found Dogs Map Section (Updated Card Style) -->
+<section class="py-5" style="background-color: #ffffff; width: 100.5vw; margin-left: calc(-51vw + 50%); margin-right: calc(-50vw + 50%);" data-aos="fade-up">
+    <div class="container custom-container px-4">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mb-2" style="font-size: 2rem;">🗺️ Dogs Found Near You</h2>
+            <p class="text-muted mb-0">
+                View reports of dogs found in your area, and help bring them home. Click on map markers to see details.
+            </p>
+        </div>
+
+        <div class="row g-5 align-items-stretch">
+            <!-- Info Card -->
+            <div class="col-lg-4 col-md-12">
+                <div class="found-dogs-card p-4 d-flex flex-column align-items-center text-center" style="gap:1.5rem; height:100%;">
+                    <h4 class="fw-bold mb-2" style="font-size:1.5rem;">🐶 Reunite a Lost Friend</h4>
+
+                    <!-- Found Dogs Section -->
+                    <div>
+                        <p class="text-muted mb-3" style="font-size:0.95rem; line-height:1.5;">
+                            Each map marker shows a found dog nearby. Explore reports, lend a hand, or add your own to help pets return home.
+                        </p>
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                            <a href="{% url 'found_dogs_list' %}" class="btn btn-primary btn-sm px-4 py-2 shadow-sm rounded-3">
+                                <i class="fas fa-eye me-2"></i> View All
+                            </a>
+                            <a href="{% url 'report_found_dog' %}" class="btn btn-info btn-sm px-4 py-2 shadow-sm rounded-3">
+                                <i class="fas fa-map-pin me-2"></i> Report Found
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quote Separator -->
+                    <div class="text-muted fst-italic" style="font-size:0.95rem; margin-top:0.5rem; margin-bottom:0.5rem;">
+                        “Sometimes the smallest act of kindness brings the biggest joy.”
+                    </div>
+
+                    <!-- Lost Dogs Section -->
+                    <div>
+                        <p class="lost-dog-text fw-semibold mb-1" style="font-size:1.1rem;">💔 Lost Your Furry Friend?</p>
+                        <p class="text-muted mb-3" style="font-size:0.95rem; line-height:1.5;">
+                            Create a lost dog report and let our caring community help bring them home safely.
+                        </p>
+                        <a href="{% url 'report_lost_dog' %}" class="btn btn-danger btn-lg shadow-sm rounded-3 px-4 py-2">
+                            <i class="fas fa-plus-circle me-2"></i> Report Lost Dog
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Map -->
+            <div class="col-lg-8 col-md-12">
+                <div id="foundDogsMap" style="height: 480px; width: 100%; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.1);"></div>
             </div>
         </div>
     </div>
 </section>
 
-<div class="my-5"></div>
-
-<!-- How It Works Section -->
-<section class="py-5" style="background-color: #eefdff;" data-aos="zoom-in-up">
-    <div class="container px-5">
-        <h2 class="text-center fw-bold mb-5 text-muted">How It Works</h2>
-        <div class="row g-4">
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="card h-100 border-0 shadow-sm rounded-4 text-center p-3">
-                    <div class="card-body">
-                        <div class="mb-3 display-5">🐶</div>
-                        <h5 class="fw-semibold">Browse & Adopt</h5>
-                        <p class="text-muted">Explore available dogs, read their stories, and find your perfect match.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="card h-100 border-0 shadow-sm rounded-4 text-center p-3">
-                    <div class="card-body">
-                        <div class="mb-3 display-5">📍</div>
-                        <h5 class="fw-semibold">Report Lost/Found</h5>
-                        <p class="text-muted">Quickly notify the community about a missing or found dog near you.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="card h-100 border-0 shadow-sm rounded-4 text-center p-3">
-                    <div class="card-body">
-                        <div class="mb-3 display-5">❤️</div>
-                        <h5 class="fw-semibold">Donate Blood</h5>
-                        <p class="text-muted">Help save lives by registering your healthy dog as a blood donor.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<div class="my-5"></div>
-
-<!-- Final CTA Section -->
-<section class="py-5 text-center" style="background-color: #f4ffe6; margin-bottom: 30px;" data-aos="fade-up">
-    <div class="container px-5">
-        <h3 class="fw-bold mb-3 text-success">Make a Paw-sitive Difference Today 🐾</h3>
-        <p class="fs-5 text-muted mb-4">Sign up to help dogs in need and join a growing community of kind-hearted pet lovers.</p>
-        <a href="{% url 'signup' %}" class="btn btn-success btn-lg px-5"><i class="fas fa-paw me-2"></i>Get Started</a>
-    </div>
-</section>
+<!-- Leaflet & Scripts -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  window.addEventListener('load', function () {
-    window.scrollTo(0, 0);
-  });
-</script>
+document.addEventListener('DOMContentLoaded', () => {
+    const foundDogs = JSON.parse('{{ found_dogs_data_json|escapejs }}');
+    let userLat = 20.5937;
+    let userLng = 78.9629;
 
+    const map = L.map('foundDogsMap').setView([userLat, userLng], 5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    function createMarkerIcon(color, iconClass) {
+        return L.divIcon({
+            html: `<i class="${iconClass}" style="color:${color}; font-size:24px;"></i>`,
+            className: '',
+            iconSize: [24, 24],
+            iconAnchor: [12, 24],
+            popupAnchor: [0, -24]
+        });
+    }
+
+    const userIcon = createMarkerIcon('#4caf50', 'fas fa-map-pin');
+    const foundDogIcon = createMarkerIcon('#2196f3', 'fas fa-map-pin');
+
+    let userMarker;
+    let userCircle;
+
+    function setUserLocation(lat, lng) {
+        userLat = lat;
+        userLng = lng;
+
+        if (userMarker) map.removeLayer(userMarker);
+        if (userCircle) map.removeLayer(userCircle);
+
+        userMarker = L.marker([userLat, userLng], {icon: userIcon}).addTo(map)
+            .bindPopup("<b>You are here</b>")
+            .openPopup();
+
+        map.flyTo([userLat, userLng], 15);
+
+        map.once('moveend', () => {
+            userCircle = L.circle([userLat, userLng], {
+                radius: 1000,
+                color: '#4A90E2',
+                fillColor: '#AED6F1',
+                fillOpacity: 0.15,
+                weight: 1.3
+            }).addTo(map);
+
+            addFoundDogsMarkers(foundDogs, userLat, userLng, 1);
+        });
+    }
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => setUserLocation(pos.coords.latitude, pos.coords.longitude),
+            () => { addFoundDogsMarkers(foundDogs, userLat, userLng, null); }
+        );
+    } else {
+        addFoundDogsMarkers(foundDogs, userLat, userLng, null);
+    }
+
+    const recenterBtn = L.control({position: 'topright'});
+    recenterBtn.onAdd = function () {
+        const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        div.style.background = '#fff';
+        div.style.borderRadius = '6px';
+        div.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
+        div.style.cursor = 'pointer';
+        div.innerHTML = '<i class="fas fa-crosshairs" title="Recenter Map" style="font-size:25px; color:#4A90E2; padding:6px;"></i>';
+        div.onclick = function() {
+            if (userLat && userLng && userMarker) {
+                map.flyTo([userLat, userLng], 15);
+                userMarker.openPopup();
+
+                if (userCircle) map.removeLayer(userCircle);
+
+                map.once('moveend', () => {
+                    userCircle = L.circle([userLat, userLng], {
+                        radius: 1000,
+                        color: '#4A90E2',
+                        fillColor: '#AED6F1',
+                        fillOpacity: 0.15,
+                        weight: 1.3
+                    }).addTo(map);
+                });
+            }
+        };
+        return div;
+    };
+    recenterBtn.addTo(map);
+
+    function addFoundDogsMarkers(dogs, lat, lng, radiusKm) {
+    dogs.forEach(dog => {
+        let show = true;
+        if (radiusKm) show = getDistance(lat, lng, dog.lat, dog.lng) <= radiusKm;
+        if (show) {
+    const popupContent = `
+        <div style="
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            width: 240px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 4px rgba(0,0,0,0.15);
+            background-color: #ffffff;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        ">
+            ${dog.image ? `
+                <img src="${dog.image}" style="
+                    width:100%;
+                    height:150px;
+                    object-fit:cover;
+                    border-bottom: 1px solid #e0e0e0;
+                ">
+            ` : `
+                <div style="
+                    width:100%;
+                    height:150px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    background:#f0f0f0;
+                    color:#999;
+                    border-bottom: 1px solid #e0e0e0;
+                    font-size: 0.9rem;
+                ">
+                    No Image Available
+                </div>
+            `}
+            <div style="padding:12px;">
+                <p style="
+                    margin:0 0 10px 0;
+                    font-size:0.95rem;
+                    font-weight:500;
+                    color:#333;
+                    line-height:1.3;
+                ">
+                    ${dog.location}
+                </p>
+                <a href="/lost/found/${dog.id}/" style="
+                    display:inline-block;
+                    width:100%;
+                    padding:10px 0;
+                    background-color:#8b5e3c;
+                    color:#fff;
+                    text-decoration:none;
+                    border-radius:6px;
+                    font-weight:600;
+                    font-size:0.9rem;
+                    transition: background-color 0.3s ease, transform 0.2s ease;
+                " 
+                onmouseover="this.style.backgroundColor='#a16d4a'; this.style.transform='translateY(-2px)'" 
+                onmouseout="this.style.backgroundColor='#8b5e3c'; this.style.transform='translateY(0)'" 
+                >
+                    View Details
+                </a>
+            </div>
+        </div>
+    `;
+    L.marker([dog.lat, dog.lng], {icon: foundDogIcon}).addTo(map).bindPopup(popupContent);
+}
+
+    });
+}
+
+
+    function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2-lat1) * Math.PI/180;
+        const dLon = (lon2-lon1) * Math.PI/180;
+        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    const legend = L.control({position: 'bottomright'});
+    legend.onAdd = function () {
+        const div = L.DomUtil.create('div', 'info legend');
+        div.style.background = '#fff';
+        div.style.padding = '6px 10px';
+        div.style.borderRadius = '6px';
+        div.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+        div.innerHTML = `
+            <div style="display:flex; align-items:center; gap:6px;">
+                <i class="fas fa-map-pin" style="color:#4caf50; font-size:1rem;"></i> 
+                <p style="font-size:1rem;margin-bottom:0px;"> You are here</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+                <i class="fas fa-map-pin" style="color:#2196f3; font-size:1rem;"></i> 
+                <p style="font-size:1rem;margin-bottom:0px;"> Found dog</p>
+            </div>
+        `;
+        return div;
+    };
+    legend.addTo(map);
+});
+</script>
 {% endblock %}
